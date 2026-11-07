@@ -1,0 +1,36 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# liboqs: собирается scripts/build_liboqs.sh, бинарники в git не храним
+vendor/oqs-install/
+
+# Секреты и ключи
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*
+*secret*
+id_rsa*
+id_ed25519*
+*.keystore
+
+# Claude Code
+.claude/
+CLAUDE.local.md
+
+# Редакторы и ОС
+.vscode/
+.idea/
+*.swp
+.DS_Store

@@ -222,12 +222,15 @@ ED25519 = Ed25519()
 ML_DSA_44 = MLDSA44()
 ML_DSA_65 = MLDSA65()
 SLH_DSA_128S = SLHDSA128s()
-FALCON_512 = Falcon512()
+# Falcon есть только в liboqs; без неё Falcon-схемы не регистрируются (None)
+FALCON_512 = Falcon512() if oqs.available("Falcon-512") else None
 HYBRID_ED25519_ML_DSA_44 = Hybrid(
     ALG_HYBRID_ED25519_ML_DSA_44, "Ed25519+ML-DSA-44", ED25519, ML_DSA_44
 )
-HYBRID_ED25519_FALCON_512 = Hybrid(
-    ALG_HYBRID_ED25519_FALCON_512, "Ed25519+Falcon-512", ED25519, FALCON_512
+HYBRID_ED25519_FALCON_512 = (
+    Hybrid(ALG_HYBRID_ED25519_FALCON_512, "Ed25519+Falcon-512", ED25519, FALCON_512)
+    if FALCON_512
+    else None
 )
 
 SCHEMES = {
@@ -241,6 +244,7 @@ SCHEMES = {
         HYBRID_ED25519_ML_DSA_44,
         HYBRID_ED25519_FALCON_512,
     )
+    if s is not None
 }
 
 

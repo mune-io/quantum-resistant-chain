@@ -250,6 +250,8 @@ def bench_optimizations():
 
 
 def main():
+    if FALCON_512 is None:
+        sys.exit("liboqs не найдена: Falcon-512 недоступен. Соберите её: scripts/build_liboqs.sh")
     emit("# Модель PQ-консенсуса: результаты замеров")
     emit()
     emit(

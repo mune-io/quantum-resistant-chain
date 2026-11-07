@@ -13,7 +13,14 @@ from qcc.crypto import (
 )
 from qcc.genesis import make_network
 
-REAL_SCHEMES = [ED25519, FALCON_512, ML_DSA_44, SLH_DSA_128S, HYBRID_ED25519_ML_DSA_44, HYBRID_ED25519_FALCON_512]
+REAL_SCHEMES = [
+    s
+    for s in (ED25519, FALCON_512, ML_DSA_44, SLH_DSA_128S, HYBRID_ED25519_ML_DSA_44, HYBRID_ED25519_FALCON_512)
+    if s is not None
+]
+
+# Falcon-512 есть только в liboqs (scripts/build_liboqs.sh)
+needs_falcon = unittest.skipUnless(FALCON_512, "liboqs не найдена: Falcon-512 недоступен")
 
 
 class TestSignatures(unittest.TestCase):
@@ -36,6 +43,7 @@ class TestSignatures(unittest.TestCase):
         self.assertFalse(h.verify(pk, b"m", broken_classic, DOMAIN_TX))
         self.assertFalse(h.verify(pk, b"m", broken_pq, DOMAIN_TX))
 
+    @needs_falcon
     def test_falcon_votes_commit_chain(self):
         sim, wallets = make_network(7, HYBRID_ED25519_FALCON_512, HYBRID_ED25519_ML_DSA_44, n_wallets=4)
         for _ in range(3):
@@ -80,6 +88,7 @@ class TestConsensus(unittest.TestCase):
         self.assertFalse(self.sim.verify_commit(weak, commit.block_hash, 1))
 
 
+@needs_falcon
 class TestKeyInState(unittest.TestCase):
     def setUp(self):
         self.sim, self.wallets = make_network(4, ED25519, HYBRID_ED25519_FALCON_512, n_wallets=2, max_rounds=3)
@@ -119,6 +128,7 @@ class TestKeyInState(unittest.TestCase):
             self.sim.produce_height([tx])
 
 
+@needs_falcon
 class TestQuorumCommit(unittest.TestCase):
     def test_commit_trimmed_to_quorum_is_valid(self):
         sim, wallets = make_network(7, FALCON_512, ED25519, n_wallets=2, commit_mode="quorum")
